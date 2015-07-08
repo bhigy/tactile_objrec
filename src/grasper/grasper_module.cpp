@@ -22,33 +22,40 @@ using namespace yarp::os;
 
 bool GrasperModule::configure(ResourceFinder &rf)
 {    
-	module_name_ = rf.check("name", Value("botRpcServer"), "module name (string)").asString();
+	module_name_ = rf.check("name", Value("grasper"), "module name (string)").asString();
 	setName(module_name_.c_str());
 
-	dictionary_config_filename_ = rf.check("dictionaryConfig", Value(""), "dictionary configuration filename (string)").asString();
-	if (dictionary_config_filename_ != "")
-	{
-		dictionary_config_filename_ = (rf.findFile(dictionary_config_filename_.c_str())).c_str();
-		if (dictionary_.fromConfigFile(dictionary_config_filename_.c_str()) == false) {
-			cerr << "botRpcServerModule: unable to read dictionary configuration file" << dictionary_config_filename_;
-			return false;
-		}
-	}
-
 	// get the name of the input and output ports, automatically prefixing the module name by using getName()
-	port_name_ = "/";
-	port_name_ += getName(rf.check("port", Value("/rpc:io"), "Rpc port (string)").asString());
+	cmd_port_name_ = "/";
+	cmd_port_name_ += getName(rf.check("cmd_port", Value("/cmd:io"), "Command port (string)").asString());
+	action_port_name_ = "/";
+	action_port_name_ += getName(rf.check("action_port", Value("/actions:io"), "Action port (string)").asString());
+	label_port_name_ = "/";
+	label_port_name_ += getName(rf.check("label_port", Value("/labels:o"), "Label port (string)").asString());
 	 
 	// open ports
-	if (!rpc_port_.open(port_name_.c_str())) {
-		cerr << getName() << ": unable to open port " << port_name_ << endl;
+	if (!cmd_port_.open(cmd_port_name_.c_str())) {
+		cerr << getName() << ": unable to open port " << cmd_port_name_ << endl;
+		return false;
+	}
+	if (!action_port_.open(action_port_name_.c_str())) {
+		cerr << getName() << ": unable to open port " << action_port_name_ << endl;
+		return false;
+	}
+	if (!label_port_.open(label_port_name_.c_str())) {
+		cerr << getName() << ": unable to open port " << label_port_name_ << endl;
 		return false;
 	}
 	
-	default_answer_ = rf.check("defaultAnswer", Value("ack"), "Default answer (string)").asString();
-	delay_ = rf.check("delay", Value("0"), "Delay (int)").asDouble();
+	string laterality = rf.check("laterality", Value("left"), "Laterality (string)").asString();
+	if (laterality == "right")
+		laterality_ = GrasperThread::Right;
+	else
+		laterality_ = GrasperThread::Left;
+		
+	grasp_duration_ = rf.check("grasp_duration", Value("0"), "Grasp duration (double)").asDouble();
    	// create the thread and pass pointers to the module parameters
-	thread_ = new GrasperThread(&rpc_port_, &default_answer_, &dictionary_, delay_);
+	thread_ = new GrasperThread(&cmd_port_, &action_port_, &label_port_, laterality_, grasp_duration_);
 	// now start the thread to do the work
 	thread_->start(); // this calls threadInit() and it if returns true, it then calls run()
 
@@ -62,7 +69,9 @@ bool GrasperModule::updateModule()
 
 bool GrasperModule::interruptModule()
 {
-	rpc_port_.interrupt();
+	cmd_port_.interrupt();
+	action_port_.interrupt();
+	label_port_.interrupt();
 	return true;
 }
 
@@ -71,7 +80,9 @@ bool GrasperModule::close()
 	/* stop the thread */
 	thread_->stop();
 
-	rpc_port_.close();
+	cmd_port_.close();
+	action_port_.close();
+	label_port_.close();
 	return true;
 }
 

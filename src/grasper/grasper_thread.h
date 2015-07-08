@@ -18,29 +18,44 @@
  * Public License for more details
 */
 
-#include <string>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Property.h>
 #include <yarp/os/RpcServer.h>
+#include <yarp/os/RpcClient.h>
 #include <yarp/os/Thread.h>
   
 class GrasperThread : public yarp::os::Thread
 {
 	public:
-		static const char DELIMITER;
+		enum ELaterality
+		{
+			Left,
+			Right
+		};
+		enum EAction
+		{
+			Close,
+			Open
+		};
 		
-		GrasperThread(yarp::os::RpcServer *rpc_port, std::string *default_answer,  yarp::os::Property *dictionary, double delay);   
+		static const std::string GRASP_ACTION;
+		static const std::string ACK;
+		static const std::string NACK;
+		
+		GrasperThread(yarp::os::RpcServer *cmd_port, yarp::os::RpcClient *action_port, yarp::os::Port *label_port, ELaterality laterality, double grasp_duration);   
 		void run(); 
 	   
 	protected:
-		/* thread parameters */
-		std::string 		*default_answer_;
-		yarp::os::Property 	*dictionary_;
-		yarp::os::RpcServer *rpc_port_;
-		double 				delay_;
+		static const std::string strLaterality[2];
 		
-		yarp::os::Bottle* buildBottle(std::string msg);
-		void addValue(yarp::os::Bottle& b, const std::string& value);
+		/* thread parameters */
+		yarp::os::RpcServer	*cmd_port_;
+		yarp::os::RpcClient *action_port_;
+		yarp::os::Port		*label_port_;
+		ELaterality 		laterality_;
+		double 				grasp_duration_;
+		
+		yarp::os::Bottle* 	sendAction(EAction action);
+		void 				sendLabel(std::string label);
 };
 
 #endif

@@ -18,9 +18,8 @@
  * Public License for more details
 */
 
-#include <yarp/os/Bottle.h>
-#include <yarp/os/Property.h>
 #include <yarp/os/RpcServer.h>
+#include <yarp/os/RpcClient.h>
 #include <yarp/os/RFModule.h>
 
 #include "grasper_thread.h"
@@ -28,7 +27,6 @@
 class GrasperModule: public yarp::os::RFModule
 {
 	public:
-	   
 	   bool configure(yarp::os::ResourceFinder &rf); // configure all the module parameters and return true if successful
 	   bool interruptModule();                       // interrupt, e.g., the ports 
 	   bool close();                                 // close and shut down the module
@@ -37,16 +35,18 @@ class GrasperModule: public yarp::os::RFModule
 	   
    private:
 	   /* module parameters */
-	   std::string 	module_name_;
-	   std::string 	port_name_;
-	   std::string 	dictionary_config_filename_;
-	   std::string 	default_answer_;
-	   double		delay_;
+	   std::string 					module_name_;
+	   std::string 					cmd_port_name_;
+	   std::string 					action_port_name_;
+	   std::string 					label_port_name_;
+	   GrasperThread::ELaterality 	laterality_;
+	   double						grasp_duration_;
 	 
 	   /* class variables */
-	   yarp::os::Property 	dictionary_;
-	   yarp::os::RpcServer 	rpc_port_;
-	   GrasperThread 	*thread_;
+	   yarp::os::RpcServer 	cmd_port_;
+	   yarp::os::RpcClient 	action_port_;
+	   yarp::os::Port		label_port_;
+	   GrasperThread 		*thread_;
 };
 
 #endif

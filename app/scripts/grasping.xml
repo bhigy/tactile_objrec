@@ -1,0 +1,195 @@
+<application>
+	<name>Haptic data acquisition</name>
+	
+	<dependencies>
+        <port>/icub/skin/left_hand</port>
+        <port>/icub/left_arm/state:o</port>
+        <port>/icub/left_arm/analog:o</port>
+    </dependencies>
+
+    <!-- Modules -->
+    
+    <module>
+        <name>skinManager</name>
+        <parameters></parameters>
+        <node>icub16</node>
+        <tag>skinManager</tag>
+    </module>
+    
+	<module>
+        <name>actionsRenderingEngine</name>
+        <node>icub12</node>
+        <tag>actionsRenderingEngine</tag>
+    </module>
+	
+	<module>
+        <name>grasper</name>  
+        <node>icub16</node>
+        <tag>grasper</tag>
+    </module>
+
+	<module>
+        <name>fingersModel</name>  
+        <node>icub16</node>
+        <tag>fingersModel</tag>
+    </module>
+
+    <module>
+        <name>yarpdatadumper</name>
+        <parameters>--name /grasper/events</parameters>
+        <node>icub16</node>
+        <prefix>/dump</prefix>
+        <tag>datadumper events</tag>
+    </module>
+    
+    <module>
+        <name>yarpdatadumper</name>
+        <parameters>--name /grasper/labels</parameters>
+        <node>icub16</node>
+        <prefix>/dump</prefix>
+        <tag>datadumper events</tag>
+    </module>
+    
+    <module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /skin/left_hand</parameters>
+		<node>icub16</node>
+		<prefix>/dump</prefix>
+		<tag>datadumpeur left_hand</tag>
+	</module>
+	
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /skin/left_hand_comp</parameters>
+		<node>icub16</node>
+		<prefix>/dump</prefix>
+		<tag>datadumpeur left_hand_comp</tag>
+	</module>
+	
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /left_arm/state</parameters>
+		<node>icub16</node>
+		<prefix>/dump</prefix>
+		<tag>datadumpeur left_arm/state:o</tag>
+	</module>
+	
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /left_arm/analog</parameters>
+		<node>icub16</node>
+		<prefix>/dump</prefix>
+		<tag>datadumpeur left_arm/analog:o</tag>
+	</module>
+	
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /model/springy</parameters>
+		<node>icub16</node>
+		<prefix>/dump</prefix>
+		<tag>datadumpeur model/springy</tag>
+	</module>
+	
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /model/tactile</parameters>
+		<node>icub16</node>
+		<prefix>/dump</prefix>
+		<tag>datadumpeur model/tactile</tag>
+	</module>
+	
+    <!-- Connections --> 
+
+    <!-- Grasper -->
+	
+    <connection>
+        <from>/grasper/actions:io</from>
+        <to>/actionsRenderingEngine/rpc</to>
+        <protocol>tcp</protocol>
+    </connection>
+    
+    <!-- Dumpers -->
+
+	<connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/grasper/events</to>
+    </connection>
+    
+    <connection>
+        <from>/grasper/labels:o</from>
+        <to>/dump/grasper/labels</to>
+    </connection>
+    
+    <connection>
+        <from>/icub/skin/left_hand</from>
+        <to>/dump/skin/left_hand</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+    </connection>
+    
+    <connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/skin/left_hand</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+    </connection>
+    
+    <connection>
+        <from>/icub/skin/left_hand_comp</from>
+        <to>/dump/skin/left_hand_comp</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+    </connection>
+    
+    <connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/skin/left_hand_comp</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+    </connection>
+	
+	<connection>
+        <from>/icub/left_arm/state:o</from>
+        <to>/dump/left_arm/state</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+    </connection>
+    
+    <connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/left_arm/state</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+    </connection>
+    
+    <connection>
+        <from>/icub/left_arm/analog:o</from>
+        <to>/dump/left_arm/analog</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+    </connection>
+    
+    <connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/left_arm/analog</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+    </connection>
+    
+    <connection>
+        <from>/fingersModel/springy:o</from>
+        <to>/dump/model/springy</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+    </connection>
+    
+    <connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/model/springy</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+    </connection>
+    
+    <connection>
+        <from>/fingersModel/tactile:o</from>
+        <to>/dump/model/tactile</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+    </connection>
+    
+    <connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/model/tactile</to>
+        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+    </connection>
+        
+</application>

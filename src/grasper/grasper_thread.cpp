@@ -25,10 +25,14 @@
 using namespace std;
 using namespace yarp::os;
 
-const char GrasperThread::DELIMITER = ' ';
+const string GrasperThread::GRASP_ACTION 	= "grasp";
+const string GrasperThread::ACK 			= "ACK";
+const string GrasperThread::NACK 			= "NACK";
 
-GrasperThread::GrasperThread(RpcServer *rpc_port, string *default_answer,  Property *dictionary, double delay)
-	: rpc_port_(rpc_port), default_answer_(default_answer), dictionary_(dictionary), delay_(delay)
+const string GrasperThread::strLaterality[] = {"left", "right"};
+
+GrasperThread::GrasperThread(RpcServer *cmd_port, RpcClient *action_port, Port *label_port, ELaterality laterality, double grasp_duration)
+	: cmd_port_(cmd_port), action_port_(action_port), label_port_(label_port), laterality_(laterality), grasp_duration_(grasp_duration)
 {
 }
 
@@ -37,54 +41,51 @@ void GrasperThread::run()
 	while (!isStopping())
 	{
 		cout << "Waiting for a message..." << endl;
-		Bottle request, *reply;
-		rpc_port_->read(request, true);
+		Bottle request, reply;
+		cmd_port_->read(request, true);
 		cout << "Message: " << request.toString() << endl;
-		Time::delay(delay_);
-		if (dictionary_ != NULL)
+		
+		if (request.size() != 2 || request.get(0).asString() != GRASP_ACTION)
 		{
-			Value answer = dictionary_->find(request.toString());
-			if (answer.isNull())
-			{
-				reply = buildBottle(*default_answer_);
-			}
-			else
-			{
-				reply = buildBottle(answer.asString());
-			}
+			reply.addString(NACK);
 		}
 		else
 		{
-			reply = buildBottle(*default_answer_);
-		}
-		cout << "Reply: >>" << reply->toString() << endl;
-		rpc_port_->reply(*reply);
-		delete reply;
+			sendLabel(request.get(1).asString());
+			sendAction(Close);
+			Time::delay(grasp_duration_);
+			sendAction(Open);
+			reply.addString(ACK);
+		}	
+		cout << "Reply: >>" << reply.toString() << endl;
+		cmd_port_->reply(reply);
 	}
 }
 
-Bottle* GrasperThread::buildBottle(string msg)
+Bottle* GrasperThread::sendAction(EAction action)
 {
-	Bottle *bottle = new Bottle();
-	int pos;
-	string token;
-	while ((pos = msg.find(DELIMITER)) != string::npos) {
-		token = msg.substr(0, pos);
-		addValue(*bottle, token);
-		msg.erase(0, pos + 1);
+	Bottle cmd, *response;
+	response = new Bottle;
+	
+	switch(action) {
+		case Close:
+			cmd.addString("close");
+			cmd.addString(strLaterality[laterality_]);
+			break;
+		case Open:
+			cmd.addString("home");
+			cmd.addString("hands");
+			break;
 	}
-	addValue(*bottle, msg);
-	return bottle;
+	action_port_->write(cmd, *response);
+	
+	return response;
 }
 
-void GrasperThread::addValue(Bottle& b, const string& value)
+void GrasperThread::sendLabel(string label)
 {
-	char* p;
-	long converted = strtol(value.c_str(), &p, 10);
-	if (*p) {
-		b.addString(value);
-	}
-	else {
-		b.addInt(converted);
-	}
+	Bottle b;
+	b.addString(label);
+	label_port_->write(b);
 }
+
