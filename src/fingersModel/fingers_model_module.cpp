@@ -42,7 +42,8 @@ bool FingersModelModule::configure(ResourceFinder &rf)
 	}
 	
    	// create the thread and pass pointers to the module parameters
-	thread_ = new FingersModelThread(&springy_port_, &tactile_port_);
+   	int period = 1 / 30 * 1000;
+	thread_ = new FingersModelThread(period, &springy_port_, &tactile_port_);
 	// now start the thread to do the work
 	thread_->start(); // this calls threadInit() and it if returns true, it then calls run()
 

@@ -25,8 +25,8 @@
 using namespace std;
 using namespace yarp::os;
 
-FingersModelThread::FingersModelThread(Port *springy_port, Port *tactile_port)
-	: springy_port_(springy_port), tactile_port_(tactile_port)
+FingersModelThread::FingersModelThread(int period, Port *springy_port, Port *tactile_port)
+	: RateThread(period), springy_port_(springy_port), tactile_port_(tactile_port)
 {
 	Property p("all_parallel");
 	sf_model_.calibrate(p);
@@ -34,9 +34,7 @@ FingersModelThread::FingersModelThread(Port *springy_port, Port *tactile_port)
 
 void FingersModelThread::run()
 {
-	while (!isStopping())
-	{
-		cout << sf_model_.isCalibrated() << endl;
-	}
+	cout << sf_model_.isCalibrated() << endl;
+	//springy_port_.write();
 }
 

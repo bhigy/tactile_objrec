@@ -19,14 +19,14 @@
 */
 
 #include <yarp/os/Port.h>
-#include <yarp/os/Thread.h>
+#include <yarp/os/RateThread.h>
 #include <iCub/perception/springyFingers.h>
   
-class FingersModelThread : public yarp::os::Thread
+class FingersModelThread : public yarp::os::RateThread
 {
 	public:
 		
-		FingersModelThread(yarp::os::Port *springy_port, yarp::os::Port *tactile_port);   
+		FingersModelThread(int period, yarp::os::Port *springy_port, yarp::os::Port *tactile_port);   
 		void run(); 
 	   
 	protected:
