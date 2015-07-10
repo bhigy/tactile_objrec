@@ -18,7 +18,7 @@ PortMonitor.create = function(options)
 		prefix = options:find("destination"):asString()
 	end
     event_port = yarp.Port()
-    return event_port:open(prefix .. "events:o");
+    return event_port:open(prefix .. "/events:o");
 end
 
 PortMonitor.update = function(thing)

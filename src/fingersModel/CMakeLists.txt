@@ -11,6 +11,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
   
 include_directories(${YARP_INCLUDE_DIRS})
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${ICUB_INCLUDE_DIR})
 include_directories(${PROJECT_SOURCE_DIR})
 
 set(folder_source main.cpp)
