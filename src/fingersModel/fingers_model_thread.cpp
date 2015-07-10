@@ -28,13 +28,18 @@ using namespace yarp::os;
 FingersModelThread::FingersModelThread(int period, Port *springy_port, Port *tactile_port)
 	: RateThread(period), springy_port_(springy_port), tactile_port_(tactile_port)
 {
-	Property p("all_parallel");
-	sf_model_.calibrate(p);
+	Property p;
+	p.fromConfigFile("grasp_model_left.ini");
+	cout << "From property: " << sf_model_.fromProperty(p) << endl;
+	//cout << "Calibration: " << sf_model_.calibrate(p) << endl;
+	cout << sf_model_.isCalibrated() << endl;
 }
 
 void FingersModelThread::run()
 {
-	cout << sf_model_.isCalibrated() << endl;
+	//cout << sf_model_.isCalibrated() << endl;
 	//springy_port_.write();
+	Value out; sf_model_.getOutput(out);
+	cout << "GetOutput: " << out.toString() << endl;
 }
 
