@@ -28,22 +28,16 @@ bool FingersModelModule::configure(ResourceFinder &rf)
 	// get the name of the input and output ports, automatically prefixing the module name by using getName()
 	springy_port_name_ = "/";
 	springy_port_name_ += getName(rf.check("springy_port", Value("/springy:o"), "Springy port (string)").asString());
-	tactile_port_name_ = "/";
-	tactile_port_name_ += getName(rf.check("tactile_port", Value("/tactile:o"), "Tactile port (string)").asString());
 	 
 	// open ports
 	if (!springy_port_.open(springy_port_name_.c_str())) {
 		cerr << getName() << ": unable to open port " << springy_port_name_ << endl;
 		return false;
 	}
-	if (!tactile_port_.open(tactile_port_name_.c_str())) {
-		cerr << getName() << ": unable to open port " << tactile_port_name_ << endl;
-		return false;
-	}
 	
    	// create the thread and pass pointers to the module parameters
    	int period = 1 / 30 * 1000;
-	thread_ = new FingersModelThread(period, &springy_port_, &tactile_port_);
+	thread_ = new FingersModelThread(period, &springy_port_);
 	// now start the thread to do the work
 	thread_->start(); // this calls threadInit() and it if returns true, it then calls run()
 
@@ -58,7 +52,6 @@ bool FingersModelModule::updateModule()
 bool FingersModelModule::interruptModule()
 {
 	springy_port_.interrupt();
-	tactile_port_.interrupt();
 	return true;
 }
 
@@ -68,7 +61,6 @@ bool FingersModelModule::close()
 	thread_->stop();
 
 	springy_port_.close();
-	tactile_port_.close();
 	return true;
 }
 

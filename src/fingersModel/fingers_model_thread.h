@@ -26,13 +26,12 @@ class FingersModelThread : public yarp::os::RateThread
 {
 	public:
 		
-		FingersModelThread(int period, yarp::os::Port *springy_port, yarp::os::Port *tactile_port);   
+		FingersModelThread(int period, yarp::os::Port *springy_port);   
 		void run(); 
 	   
 	protected:
 		/* thread parameters */
 		yarp::os::Port 							*springy_port_;
-		yarp::os::Port 							*tactile_port_;
 		iCub::perception::SpringyFingersModel 	sf_model_;
 };
 
