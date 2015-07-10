@@ -31,7 +31,8 @@ FingersModelThread::FingersModelThread(int period, Port *springy_port, Port *tac
 	Property p;
 	p.fromConfigFile("grasp_model_left.ini");
 	cout << "From property: " << sf_model_.fromProperty(p) << endl;
-	//cout << "Calibration: " << sf_model_.calibrate(p) << endl;
+    p.put("finger", "all_parallel");
+	cout << "Calibration: " << sf_model_.calibrate(p) << endl;
 	cout << sf_model_.isCalibrated() << endl;
 }
 
