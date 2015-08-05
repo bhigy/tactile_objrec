@@ -22,7 +22,7 @@
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RFModule.h>
 
-#include "grasper_thread.h"
+#include "grasperThread.h"
 
 class GrasperModule: public yarp::os::RFModule
 {
@@ -35,17 +35,17 @@ class GrasperModule: public yarp::os::RFModule
 	   
    private:
 	   /* module parameters */
-	   std::string 					module_name_;
-	   std::string 					cmd_port_name_;
-	   std::string 					action_port_name_;
-	   std::string 					label_port_name_;
+	   std::string 					moduleName_;
+	   std::string 					cmdPortName_;
+	   std::string 					actionPortName_;
+	   std::string 					labelPortName_;
 	   GrasperThread::ELaterality 	laterality_;
-	   double						grasp_duration_;
+	   double						graspDuration_;
 	 
 	   /* class variables */
-	   yarp::os::RpcServer 	cmd_port_;
-	   yarp::os::RpcClient 	action_port_;
-	   yarp::os::Port		label_port_;
+	   yarp::os::RpcServer 	cmdPort_;
+	   yarp::os::RpcClient 	actionPort_;
+	   yarp::os::Port		labelPort_;
 	   GrasperThread 		*thread_;
 };
 

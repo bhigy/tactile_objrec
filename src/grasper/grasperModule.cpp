@@ -15,35 +15,35 @@
  * Public License for more details
 */
 
-#include "grasper_module.h"
+#include "grasperModule.h"
 
 using namespace std;
 using namespace yarp::os;
 
 bool GrasperModule::configure(ResourceFinder &rf)
 {    
-	module_name_ = rf.check("name", Value("grasper"), "module name (string)").asString();
-	setName(module_name_.c_str());
+	moduleName_ = rf.check("name", Value("grasper"), "module name (string)").asString();
+	setName(moduleName_.c_str());
 
 	// get the name of the input and output ports, automatically prefixing the module name by using getName()
-	cmd_port_name_ = "/";
-	cmd_port_name_ += getName(rf.check("cmd_port", Value("/cmd:io"), "Command port (string)").asString());
-	action_port_name_ = "/";
-	action_port_name_ += getName(rf.check("action_port", Value("/actions:io"), "Action port (string)").asString());
-	label_port_name_ = "/";
-	label_port_name_ += getName(rf.check("label_port", Value("/labels:o"), "Label port (string)").asString());
+	cmdPortName_ = "/";
+	cmdPortName_ += getName(rf.check("cmdPort", Value("/cmd:io"), "Command port (string)").asString());
+	actionPortName_ = "/";
+	actionPortName_ += getName(rf.check("actionPort", Value("/actions:io"), "Action port (string)").asString());
+	labelPortName_ = "/";
+	labelPortName_ += getName(rf.check("labelPort", Value("/labels:o"), "Label port (string)").asString());
 	 
 	// open ports
-	if (!cmd_port_.open(cmd_port_name_.c_str())) {
-		cerr << getName() << ": unable to open port " << cmd_port_name_ << endl;
+	if (!cmdPort_.open(cmdPortName_.c_str())) {
+		cerr << getName() << ": unable to open port " << cmdPortName_ << endl;
 		return false;
 	}
-	if (!action_port_.open(action_port_name_.c_str())) {
-		cerr << getName() << ": unable to open port " << action_port_name_ << endl;
+	if (!actionPort_.open(actionPortName_.c_str())) {
+		cerr << getName() << ": unable to open port " << actionPortName_ << endl;
 		return false;
 	}
-	if (!label_port_.open(label_port_name_.c_str())) {
-		cerr << getName() << ": unable to open port " << label_port_name_ << endl;
+	if (!labelPort_.open(labelPortName_.c_str())) {
+		cerr << getName() << ": unable to open port " << labelPortName_ << endl;
 		return false;
 	}
 	
@@ -53,9 +53,9 @@ bool GrasperModule::configure(ResourceFinder &rf)
 	else
 		laterality_ = GrasperThread::Left;
 		
-	grasp_duration_ = rf.check("grasp_duration", Value("0"), "Grasp duration (double)").asDouble();
+	graspDuration_ = rf.check("graspDuration", Value("0"), "Grasp duration (double)").asDouble();
    	// create the thread and pass pointers to the module parameters
-	thread_ = new GrasperThread(&cmd_port_, &action_port_, &label_port_, laterality_, grasp_duration_);
+	thread_ = new GrasperThread(&cmdPort_, &actionPort_, &labelPort_, laterality_, graspDuration_);
 	// now start the thread to do the work
 	thread_->start(); // this calls threadInit() and it if returns true, it then calls run()
 
@@ -69,9 +69,9 @@ bool GrasperModule::updateModule()
 
 bool GrasperModule::interruptModule()
 {
-	cmd_port_.interrupt();
-	action_port_.interrupt();
-	label_port_.interrupt();
+	cmdPort_.interrupt();
+	actionPort_.interrupt();
+	labelPort_.interrupt();
 	return true;
 }
 
@@ -80,9 +80,9 @@ bool GrasperModule::close()
 	/* stop the thread */
 	thread_->stop();
 
-	cmd_port_.close();
-	action_port_.close();
-	label_port_.close();
+	cmdPort_.close();
+	actionPort_.close();
+	labelPort_.close();
 	return true;
 }
 

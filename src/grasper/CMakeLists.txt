@@ -15,7 +15,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 set(folder_source main.cpp)
 #source_group("Source Files" FILES ${folder_source})
-add_executable(${PROJECTNAME} ${folder_source} grasper_module.cpp grasper_thread.cpp)
+add_executable(${PROJECTNAME} ${folder_source} grasperModule.cpp grasperThread.cpp)
 
 target_link_libraries(${PROJECTNAME} ${OpenCV_LIBRARIES} ${YARP_LIBRARIES})
 

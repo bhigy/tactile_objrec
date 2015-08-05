@@ -19,7 +19,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
 
-#include "grasper_module.h"
+#include "grasperModule.h"
 
 using namespace yarp::os;
 
