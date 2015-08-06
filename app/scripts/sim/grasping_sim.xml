@@ -4,7 +4,6 @@
 	<dependencies>
         <port>/icub/skin/left_hand_comp</port>
         <port>/icub/left_arm/state:o</port>
-        <port>/icub/left_arm/analog:o</port>
     </dependencies>
 
     <!-- Modules -->
@@ -17,7 +16,8 @@
     </module>
 	
 	<module>
-        <name>grasper</name>  
+        <name>grasper</name>
+        <parameters>--graspDuration 2</parameters>
         <node>localhost</node>
         <tag>grasper</tag>
     </module>
@@ -70,26 +70,10 @@
 	
 	<module>
 		<name>yarpdatadumper</name>
-		<parameters>--name /left_arm/analog</parameters>
-		<node>localhost</node>
-		<prefix>/dump</prefix>
-		<tag>datadumpeur left_arm/analog:o</tag>
-	</module>
-	
-	<module>
-		<name>yarpdatadumper</name>
 		<parameters>--name /model/springy</parameters>
 		<node>localhost</node>
 		<prefix>/dump</prefix>
 		<tag>datadumpeur model/springy</tag>
-	</module>
-	
-	<module>
-		<name>yarpdatadumper</name>
-		<parameters>--name /model/tactile</parameters>
-		<node>localhost</node>
-		<prefix>/dump</prefix>
-		<tag>datadumpeur model/tactile</tag>
 	</module>
 	
     <!-- Connections --> 
@@ -117,73 +101,49 @@
     <connection>
         <from>/icub/skin/left_hand_comp</from>
         <to>/dump/skin/left_hand</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+        <protocol>tcp+recv.portmonitor+file.data_monitor</protocol>
     </connection>
     
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/skin/left_hand</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+        <protocol>tcp+recv.portmonitor+file.dump_controller</protocol>
     </connection>
     
     <connection>
         <from>/icub/skin/left_hand_comp</from>
         <to>/dump/skin/left_hand_comp</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+        <protocol>tcp+recv.portmonitor+file.data_monitor</protocol>
     </connection>
     
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/skin/left_hand_comp</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+        <protocol>tcp+recv.portmonitor+file.dump_controller</protocol>
     </connection>
 	
 	<connection>
         <from>/icub/left_arm/state:o</from>
         <to>/dump/left_arm/state</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+        <protocol>tcp+recv.portmonitor+file.data_monitor</protocol>
     </connection>
     
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/left_arm/state</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
-    </connection>
-    
-    <connection>
-        <from>/icub/left_arm/analog:o</from>
-        <to>/dump/left_arm/analog</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
-    </connection>
-    
-    <connection>
-        <from>/grasper/actions:io/events:o</from>
-        <to>/dump/left_arm/analog</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+        <protocol>tcp+recv.portmonitor+file.dump_controller</protocol>
     </connection>
     
     <connection>
         <from>/fingersModel/springy:o</from>
         <to>/dump/model/springy</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
+        <protocol>tcp+recv.portmonitor+file.data_monitor</protocol>
     </connection>
     
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/model/springy</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
-    </connection>
-    
-    <connection>
-        <from>/fingersModel/tactile:o</from>
-        <to>/dump/model/tactile</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.data_monitor</protocol>
-    </connection>
-    
-    <connection>
-        <from>/grasper/actions:io/events:o</from>
-        <to>/dump/model/tactile</to>
-        <protocol>tcp+recv.portmonitor+type.lua+file.dump_controller</protocol>
+        <protocol>tcp+recv.portmonitor+file.dump_controller</protocol>
     </connection>
         
 </application>
