@@ -30,7 +30,7 @@ PortMonitor.update = function(thing)
 	bt = thing:asBottle()
 	event = yarp.Bottle()
 	event:addString("request")
-	event:append(bt)
+	event:addString(bt:toString())
 	event_port:write(event)
 	return thing
 end
@@ -47,7 +47,7 @@ PortMonitor.update_reply = function(thing)
     bt = thing:asBottle()
     event = yarp.Bottle()
     event:addString("reply")
-	event:addString(bt.toString())
+	event:addString(bt:toString())
 	event_port:write(event)
     return thing
 end
