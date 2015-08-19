@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
    ResourceFinder rf;
    rf.setVerbose(true);
-   rf.setDefaultContext("fingersModel/conf");
+   rf.setDefaultContext("fingersModel");
    rf.setDefaultConfigFile("config.ini");
    rf.configure(argc,argv);
    FingersModelModule server;

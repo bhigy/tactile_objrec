@@ -26,7 +26,7 @@ class FingersModelThread : public yarp::os::RateThread
 {
 	public:
 		
-		FingersModelThread(int period, yarp::os::Port *springy_port);   
+		FingersModelThread(int period, yarp::os::Port *springy_port, const yarp::os::ConstString& model_config_filename);   
 		void run(); 
 	   
 	protected:

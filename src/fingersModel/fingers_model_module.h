@@ -35,9 +35,11 @@ class FingersModelModule: public yarp::os::RFModule
 	   
    private:
 	   /* module parameters */
-	   std::string 	module_name_;
-	   std::string 	springy_port_name_;
-	   std::string 	tactile_port_name_;
+	   double	   period_;
+	   std::string module_name_;
+	   std::string springy_port_name_;
+	   std::string tactile_port_name_;
+	   std::string model_config_filename_;
 	   	 
 	   /* class variables */
 	   yarp::os::Port 		springy_port_;

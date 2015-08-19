@@ -35,9 +35,13 @@ bool FingersModelModule::configure(ResourceFinder &rf)
 		return false;
 	}
 	
+	double default_period = 1.0 / 30 * 1000;
+	period_ = rf.check("period", Value(default_period), "Grasp duration (double)").asDouble();
+	model_config_filename_ = rf.check("modelConf", Value("grasp_model_left.ini"), "Model config filename (string)").asString();
+	cerr << model_config_filename_ << endl;
+	
    	// create the thread and pass pointers to the module parameters
-   	int period = 1 / 30 * 1000;
-	thread_ = new FingersModelThread(period, &springy_port_);
+	thread_ = new FingersModelThread(period_, &springy_port_, rf.findFile(model_config_filename_));
 	// now start the thread to do the work
 	thread_->start(); // this calls threadInit() and it if returns true, it then calls run()
 

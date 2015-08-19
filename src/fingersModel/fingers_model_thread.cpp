@@ -25,14 +25,15 @@
 using namespace std;
 using namespace yarp::os;
 
-FingersModelThread::FingersModelThread(int period, Port *springy_port)
+FingersModelThread::FingersModelThread(int period, Port *springy_port, const ConstString& model_config_filename)
 	: RateThread(period), springy_port_(springy_port)
 {
 	Property p;
-	p.fromConfigFile("grasp_model_left.ini");
+	p.fromConfigFile(model_config_filename);
 	sf_model_.fromProperty(p);
-    p.put("finger", "all_parallel");
+	p.put("finger", "all_parallel");
 	sf_model_.calibrate(p);
+	cout << "Init: " << sf_model_.isCalibrated();
 }
 
 void FingersModelThread::run()
@@ -40,7 +41,11 @@ void FingersModelThread::run()
 	Value out;
 	sf_model_.getOutput(out);
 	Bottle b;
-	b.add(out);
+	Bottle* list = out.asList();
+	for(int i = 0; i < list->size(); ++i)
+	{
+		b.add(list->get(i));
+	}
 	springy_port_->write(b);
 }
 
