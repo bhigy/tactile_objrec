@@ -40,8 +40,8 @@ PortMonitor.accept = function(thing)
 	bt = thing:asBottle()
     if dumpActivated == true then
     	if homeInitiated == false then
-			if  bt:size() == 3 and bt:get(0):asString() == "request"
-			and bt:get(1):asString() == "home" then
+			if  bt:size() == 2 and bt:get(0):asString() == "request"
+			and string.sub(bt:get(1):asString(), 1, 4) == "home" then
 		    	homeInitiated = true
 		   	end
        	else
@@ -53,8 +53,8 @@ PortMonitor.accept = function(thing)
         	
         end
     else
-    	if  bt:size() == 3 and bt:get(0):asString() == "request" 
-    	and bt:get(1):asString() == "close" then
+    	if  bt:size() == 2 and bt:get(0):asString() == "request" 
+    	and string.sub(bt:get(1):asString(), 1, 5) == "close" then
     		dumpActivated = true
         	PortMonitor.setEvent("e_dump_activated")
 	   	end
