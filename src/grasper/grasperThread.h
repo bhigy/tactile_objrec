@@ -34,10 +34,15 @@ class GrasperThread : public yarp::os::Thread
 		enum EAction
 		{
 			Close,
-			Open
+			Open,
+			Expect,
+			Give,
+			Weigh,
 		};
 		
 		static const std::string GRASP_ACTION;
+		static const std::string EXPLORE_ACTION;
+		static const std::string WEIGH_ACTION;
 		static const std::string ACK;
 		static const std::string NACK;
 		
@@ -56,6 +61,8 @@ class GrasperThread : public yarp::os::Thread
 		
 		yarp::os::Bottle* 	sendAction(EAction action);
 		void 				sendLabel(std::string label);
+		void 				performAction(std::string action);
+		void				recalibrate();
 };
 
 #endif

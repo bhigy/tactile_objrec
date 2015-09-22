@@ -107,7 +107,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/skin/left_hand</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
     </connection>
     
     <connection>
@@ -119,7 +119,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/skin/left_hand_comp</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
     </connection>
 	
 	<connection>
@@ -131,7 +131,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/left_arm/state</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
     </connection>
     
     <connection>
@@ -143,7 +143,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/model/springy</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
     </connection>
         
 </application>

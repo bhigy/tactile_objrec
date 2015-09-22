@@ -26,6 +26,8 @@ using namespace std;
 using namespace yarp::os;
 
 const string GrasperThread::GRASP_ACTION 	= "grasp";
+const string GrasperThread::EXPLORE_ACTION 	= "explore";
+const string GrasperThread::WEIGH_ACTION 	= "weigh";
 const string GrasperThread::ACK 			= "ACK";
 const string GrasperThread::NACK 			= "NACK";
 
@@ -45,21 +47,54 @@ void GrasperThread::run()
 		cmdPort_->read(request, true);
 		cout << "Message: " << request.toString() << endl;
 		
-		if (request.size() != 2 || request.get(0).asString() != GRASP_ACTION)
+		if (request.size() != 2)
 		{
 			reply.addString(NACK);
 		}
 		else
 		{
-			sendLabel(request.get(1).asString());
-			sendAction(Close);
-			Time::delay(graspDuration_);
-			sendAction(Open);
-			reply.addString(ACK);
+			string action = request.get(0).asString();
+			if (action != GRASP_ACTION && action != EXPLORE_ACTION)
+			{
+				reply.addString(NACK);
+			}
+			else
+			{
+				sendLabel(request.get(1).asString());
+				performAction(action);
+				recalibrate();
+				reply.addString(ACK);
+			}
 		}	
 		cout << "Reply: >>" << reply.toString() << endl;
 		cmdPort_->reply(reply);
 	}
+}
+
+void GrasperThread::performAction(string action)
+{
+	if(action == GRASP_ACTION)
+	{
+		sendAction(Close);
+		Time::delay(graspDuration_);
+		sendAction(Open);
+	}
+	else if(action == EXPLORE_ACTION)
+	{
+		sendAction(Expect);
+		Time::delay(graspDuration_);
+		sendAction(Weigh);
+		sendAction(Give);
+	}
+	else if(action == WEIGH_ACTION)
+	{
+		sendAction(Weigh);
+	}
+}
+
+void GrasperThread::recalibrate()
+{
+	// TODO
 }
 
 Bottle* GrasperThread::sendAction(EAction action)
@@ -75,6 +110,18 @@ Bottle* GrasperThread::sendAction(EAction action)
 		case Open:
 			cmd.addString("home");
 			cmd.addString("hands");
+			break;
+		case Expect:
+			cmd.addString("expect");
+			cmd.addString(strLaterality[laterality_]);
+			break;
+		case Give:
+			cmd.addString("give");
+			cmd.addString(strLaterality[laterality_]);
+			break;
+		case Weigh:
+			cmd.addString("weigh");
+			cmd.addString(strLaterality[laterality_]);
 			break;
 	}
 	actionPort_->write(cmd, *response);
