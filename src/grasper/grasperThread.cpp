@@ -61,8 +61,8 @@ void GrasperThread::run()
 			else
 			{
 				sendLabel(request.get(1).asString());
-				performAction(action);
 				recalibrate();
+				performAction(action);
 				reply.addString(ACK);
 			}
 		}	
