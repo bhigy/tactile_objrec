@@ -32,6 +32,8 @@ bool GrasperModule::configure(ResourceFinder &rf)
 	actionPortName_ += getName(rf.check("actionPort", Value("/actions:io"), "Action port (string)").asString());
 	labelPortName_ = "/";
 	labelPortName_ += getName(rf.check("labelPort", Value("/labels:o"), "Label port (string)").asString());
+	wbdPortName_ = "/";
+	wbdPortName_ += getName(rf.check("wbdPort", Value("/wbd:io"), "Label port (string)").asString());
 	 
 	// open ports
 	if (!cmdPort_.open(cmdPortName_.c_str())) {
@@ -46,6 +48,10 @@ bool GrasperModule::configure(ResourceFinder &rf)
 		cerr << getName() << ": unable to open port " << labelPortName_ << endl;
 		return false;
 	}
+	if (!wbdPort_.open(wbdPortName_.c_str())) {
+		cerr << getName() << ": unable to open port " << wbdPortName_ << endl;
+		return false;
+	}
 	
 	string laterality = rf.check("laterality", Value("left"), "Laterality (string)").asString();
 	if (laterality == "right")
@@ -55,7 +61,7 @@ bool GrasperModule::configure(ResourceFinder &rf)
 		
 	graspDuration_ = rf.check("graspDuration", Value("0"), "Grasp duration (double)").asDouble();
    	// create the thread and pass pointers to the module parameters
-	thread_ = new GrasperThread(&cmdPort_, &actionPort_, &labelPort_, laterality_, graspDuration_);
+	thread_ = new GrasperThread(&cmdPort_, &actionPort_, &labelPort_, &wbdPort_, laterality_, graspDuration_);
 	// now start the thread to do the work
 	thread_->start(); // this calls threadInit() and it if returns true, it then calls run()
 

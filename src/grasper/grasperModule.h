@@ -39,12 +39,14 @@ class GrasperModule: public yarp::os::RFModule
 	   std::string 					cmdPortName_;
 	   std::string 					actionPortName_;
 	   std::string 					labelPortName_;
+	   std::string 					wbdPortName_;
 	   GrasperThread::ELaterality 	laterality_;
 	   double						graspDuration_;
 	 
 	   /* class variables */
 	   yarp::os::RpcServer 	cmdPort_;
 	   yarp::os::RpcClient 	actionPort_;
+	   yarp::os::RpcClient 	wbdPort_;
 	   yarp::os::Port		labelPort_;
 	   GrasperThread 		*thread_;
 };

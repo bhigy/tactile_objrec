@@ -33,8 +33,8 @@ const string GrasperThread::NACK 			= "NACK";
 
 const string GrasperThread::strLaterality[] = {"left", "right"};
 
-GrasperThread::GrasperThread(RpcServer *cmdPort, RpcClient *actionPort, Port *labelPort, ELaterality laterality, double graspDuration)
-	: cmdPort_(cmdPort), actionPort_(actionPort), labelPort_(labelPort), laterality_(laterality), graspDuration_(graspDuration)
+GrasperThread::GrasperThread(RpcServer *cmdPort, RpcClient *actionPort, Port *labelPort, RpcClient *wbdPort, ELaterality laterality, double graspDuration)
+	: cmdPort_(cmdPort), actionPort_(actionPort), labelPort_(labelPort), wbdPort_(wbdPort), laterality_(laterality), graspDuration_(graspDuration)
 {
 }
 
@@ -54,7 +54,7 @@ void GrasperThread::run()
 		else
 		{
 			string action = request.get(0).asString();
-			if (action != GRASP_ACTION && action != EXPLORE_ACTION)
+			if (action != GRASP_ACTION && action != EXPLORE_ACTION && action != WEIGH_ACTION)
 			{
 				reply.addString(NACK);
 			}
@@ -81,23 +81,26 @@ void GrasperThread::performAction(string action)
 	}
 	else if(action == EXPLORE_ACTION)
 	{
-		sendAction(Expect);
+		sendAction(Expect, true);
 		Time::delay(graspDuration_);
-		sendAction(Weigh);
-		sendAction(Give);
+		sendAction(Weigh, true);
+		sendAction(Give, true);
 	}
 	else if(action == WEIGH_ACTION)
 	{
-		sendAction(Weigh);
+		sendAction(Weigh, true);
 	}
 }
 
-void GrasperThread::recalibrate()
+Bottle* GrasperThread::recalibrate()
 {
-	// TODO
+	Bottle cmd, *response;;
+	cmd.addInt(0);
+	wbdPort_->write(cmd, *response);
+	return response;
 }
 
-Bottle* GrasperThread::sendAction(EAction action)
+Bottle* GrasperThread::sendAction(EAction action, bool nohome)
 {
 	Bottle cmd, *response;
 	response = new Bottle;
@@ -124,6 +127,11 @@ Bottle* GrasperThread::sendAction(EAction action)
 			cmd.addString(strLaterality[laterality_]);
 			break;
 	}
+	if (nohome)
+	{
+		cmd.addString("no_home");
+	}
+	
 	actionPort_->write(cmd, *response);
 	
 	return response;

@@ -46,7 +46,7 @@ class GrasperThread : public yarp::os::Thread
 		static const std::string ACK;
 		static const std::string NACK;
 		
-		GrasperThread(yarp::os::RpcServer *cmdPort, yarp::os::RpcClient *actionPort, yarp::os::Port *labelPort, ELaterality laterality, double graspDuration);   
+		GrasperThread(yarp::os::RpcServer *cmdPort, yarp::os::RpcClient *actionPort, yarp::os::Port *labelPort, yarp::os::RpcClient *wbdPort, ELaterality laterality, double graspDuration);   
 		void run(); 
 	   
 	protected:
@@ -56,13 +56,14 @@ class GrasperThread : public yarp::os::Thread
 		yarp::os::RpcServer	*cmdPort_;
 		yarp::os::RpcClient *actionPort_;
 		yarp::os::Port		*labelPort_;
+		yarp::os::RpcClient *wbdPort_;
 		ELaterality 		laterality_;
 		double 				graspDuration_;
 		
-		yarp::os::Bottle* 	sendAction(EAction action);
+		yarp::os::Bottle* 	sendAction(EAction action, bool nohome = false);
 		void 				sendLabel(std::string label);
 		void 				performAction(std::string action);
-		void				recalibrate();
+		yarp::os::Bottle*	recalibrate();
 };
 
 #endif
