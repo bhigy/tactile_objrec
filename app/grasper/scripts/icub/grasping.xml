@@ -6,33 +6,35 @@
         <port>/icub/skin/left_hand_comp</port>
         <port>/icub/left_arm/state:o</port>
         <port>/icub/left_arm/analog:o</port>
+        <port>/wholeBodyDynamics/rpc:i</port>
     </dependencies>
 
     <!-- Modules -->
    
 	<module>
-        <name>actionsRenderingEngine</name>
-        <node>icub12</node>
+        <name>/home/bhigy/dev/icub-contrib/icubBMM15/are_bkp/actionsRenderingEngine/build/actionsRenderingEngine</name>
+        <parameters>--context are2</parameters>
+        <node>localhost</node>
         <tag>actionsRenderingEngine</tag>
     </module>
 	
 	<module>
         <name>grasper</name>
-        <parameters>--graspDuration 2</parameters>
-        <node>icub16</node>
+        <parameters>--graspDuration 2 --laterality left</parameters>
+        <node>localhost</node>
         <tag>grasper</tag>
     </module>
 
 	<module>
         <name>fingersModel</name>  
-        <node>icub16</node>
+        <node>localhost</node>
         <tag>fingersModel</tag>
     </module>
 
     <module>
         <name>yarpdatadumper</name>
         <parameters>--name /grasper/events</parameters>
-        <node>icub16</node>
+        <node>localhost</node>
         <prefix>/dump</prefix>
         <tag>datadumper events</tag>
     </module>
@@ -40,7 +42,7 @@
     <module>
         <name>yarpdatadumper</name>
         <parameters>--name /grasper/labels</parameters>
-        <node>icub16</node>
+        <node>localhost</node>
         <prefix>/dump</prefix>
         <tag>datadumper events</tag>
     </module>
@@ -48,7 +50,7 @@
     <module>
 		<name>yarpdatadumper</name>
 		<parameters>--name /skin/left_hand</parameters>
-		<node>icub16</node>
+		<node>localhost</node>
 		<prefix>/dump</prefix>
 		<tag>datadumpeur left_hand</tag>
 	</module>
@@ -56,7 +58,7 @@
 	<module>
 		<name>yarpdatadumper</name>
 		<parameters>--name /skin/left_hand_comp</parameters>
-		<node>icub16</node>
+		<node>localhost</node>
 		<prefix>/dump</prefix>
 		<tag>datadumpeur left_hand_comp</tag>
 	</module>
@@ -64,7 +66,7 @@
 	<module>
 		<name>yarpdatadumper</name>
 		<parameters>--name /left_arm/state</parameters>
-		<node>icub16</node>
+		<node>localhost</node>
 		<prefix>/dump</prefix>
 		<tag>datadumpeur left_arm/state:o</tag>
 	</module>
@@ -72,7 +74,7 @@
 	<module>
 		<name>yarpdatadumper</name>
 		<parameters>--name /left_arm/analog</parameters>
-		<node>icub16</node>
+		<node>localhost</node>
 		<prefix>/dump</prefix>
 		<tag>datadumpeur left_arm/analog:o</tag>
 	</module>
@@ -80,7 +82,7 @@
 	<module>
 		<name>yarpdatadumper</name>
 		<parameters>--name /model/springy</parameters>
-		<node>icub16</node>
+		<node>localhost</node>
 		<prefix>/dump</prefix>
 		<tag>datadumpeur model/springy</tag>
 	</module>
@@ -108,6 +110,11 @@
     </connection>
     
     <connection>
+        <from>/grasper/wbd:io</from>
+        <to>/wholeBodyDynamics/rpc:i</to>
+    </connection>
+    
+    <connection>
         <from>/icub/skin/left_hand</from>
         <to>/dump/skin/left_hand</to>
         <protocol>tcp+recv.portmonitor+context.grasper+file.data_monitor</protocol>
@@ -116,7 +123,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/skin/left_hand</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
     </connection>
     
     <connection>
@@ -128,7 +135,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/skin/left_hand_comp</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
     </connection>
 	
 	<connection>
@@ -140,7 +147,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/left_arm/state</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
     </connection>
     
     <connection>
@@ -152,7 +159,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/left_arm/analog</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
     </connection>
     
     <connection>
@@ -164,7 +171,7 @@
     <connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/model/springy</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_grasp</protocol>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
     </connection>
         
 </application>

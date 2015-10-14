@@ -60,7 +60,7 @@ class GrasperThread : public yarp::os::Thread
 		ELaterality 		laterality_;
 		double 				graspDuration_;
 		
-		yarp::os::Bottle* 	sendAction(EAction action, bool nohome = false);
+		yarp::os::Bottle* 	sendAction(EAction action, bool nohome = false, bool nohead = true);
 		void 				sendLabel(std::string label);
 		void 				performAction(std::string action);
 		yarp::os::Bottle*	recalibrate();

@@ -100,7 +100,7 @@ Bottle* GrasperThread::recalibrate()
 	return response;
 }
 
-Bottle* GrasperThread::sendAction(EAction action, bool nohome)
+Bottle* GrasperThread::sendAction(EAction action, bool nohome, bool nohead)
 {
 	Bottle cmd, *response;
 	response = new Bottle;
@@ -130,6 +130,11 @@ Bottle* GrasperThread::sendAction(EAction action, bool nohome)
 	if (nohome)
 	{
 		cmd.addString("no_home");
+	}
+	
+	if (nohead)
+	{
+		cmd.addString("no_head");
 	}
 	
 	actionPort_->write(cmd, *response);
