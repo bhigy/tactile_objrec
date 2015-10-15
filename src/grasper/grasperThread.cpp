@@ -84,6 +84,7 @@ void GrasperThread::performAction(string action)
 		sendAction(Expect, true);
 		Time::delay(graspDuration_);
 		sendAction(Weigh, true);
+		sendAction(RotateWrist, true);
 		sendAction(Give, true);
 	}
 	else if(action == WEIGH_ACTION)
@@ -124,6 +125,10 @@ Bottle* GrasperThread::sendAction(EAction action, bool nohome, bool nohead)
 			break;
 		case Weigh:
 			cmd.addString("weigh");
+			cmd.addString(strLaterality[laterality_]);
+			break;
+		case RotateWrist:
+			cmd.addString("wrist");
 			cmd.addString(strLaterality[laterality_]);
 			break;
 	}

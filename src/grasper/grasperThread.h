@@ -38,6 +38,7 @@ class GrasperThread : public yarp::os::Thread
 			Expect,
 			Give,
 			Weigh,
+			RotateWrist
 		};
 		
 		static const std::string GRASP_ACTION;

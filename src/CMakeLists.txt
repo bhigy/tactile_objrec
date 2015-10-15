@@ -5,3 +5,4 @@ cmake_minimum_required(VERSION 2.6)
 
 add_subdirectory(grasper)
 add_subdirectory(fingersModel)
+add_subdirectory(are_bkp)
