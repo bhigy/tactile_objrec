@@ -44,6 +44,7 @@ class GrasperThread : public yarp::os::Thread
 		static const std::string GRASP_ACTION;
 		static const std::string EXPLORE_ACTION;
 		static const std::string WEIGH_ACTION;
+		static const std::string SKIP_ACTION;
 		static const std::string ACK;
 		static const std::string NACK;
 		

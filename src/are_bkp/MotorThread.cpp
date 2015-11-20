@@ -2022,7 +2022,7 @@ bool MotorThread::expect(Bottle &options)
     bool contact_detected=false;
     Vector wrench(6);
     double t=Time::now();
-    while(!contact_detected && Time::now()-t<5.0)
+    while(!contact_detected && Time::now()-t<3.0)
     {
         action[arm]->getExtWrench(wrench);
         if(norm(wrench)>force_thresh)
@@ -2172,7 +2172,7 @@ bool MotorThread::weigh(Bottle &options)
 
     new2_x = init_x;
     new2_x[2]+=0.1;
-
+    new2_x[0]+=0.03;
 
     if(!checkOptions(options,"no_head") && !checkOptions(options,"no_gaze"))
         setGazeIdle();

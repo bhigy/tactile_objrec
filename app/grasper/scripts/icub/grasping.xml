@@ -2,17 +2,18 @@
 	<name>Haptic data acquisition</name>
 	
 	<dependencies>
-        <port>/icub/skin/left_hand</port>
-        <port>/icub/skin/left_hand_comp</port>
-        <port>/icub/left_arm/state:o</port>
-        <port>/icub/left_arm/analog:o</port>
-        <port>/wholeBodyDynamics/rpc:i</port>
+        <port>/icub/skin/right_hand</port>
+        <port>/icub/skin/right_hand_comp</port>
+        <port>/icub/right_arm/state:o</port>
+        <port>/icub/right_arm/analog:o</port>
+        <port>/wholeBodyDynamics/right_arm/endEffectorWrench:o</port>
+        <port>/wholeBodyDynamics/right_arm/cartesianEndEffectorWrench:o</port>
     </dependencies>
 
     <!-- Modules -->
    
 	<module>
-        <name>/home/bhigy/dev/icub-contrib/icubBMM15/are_bkp/actionsRenderingEngine/build/actionsRenderingEngine</name>
+        <name>are_bkp</name>
         <parameters>--context are2</parameters>
         <node>localhost</node>
         <tag>actionsRenderingEngine</tag>
@@ -20,7 +21,7 @@
 	
 	<module>
         <name>grasper</name>
-        <parameters>--graspDuration 2 --laterality left</parameters>
+        <parameters>--graspDuration 2 --laterality right</parameters>
         <node>localhost</node>
         <tag>grasper</tag>
     </module>
@@ -49,34 +50,34 @@
     
     <module>
 		<name>yarpdatadumper</name>
-		<parameters>--name /skin/left_hand</parameters>
+		<parameters>--name /skin/right_hand</parameters>
 		<node>localhost</node>
 		<prefix>/dump</prefix>
-		<tag>datadumpeur left_hand</tag>
+		<tag>datadumper right_hand</tag>
 	</module>
 	
 	<module>
 		<name>yarpdatadumper</name>
-		<parameters>--name /skin/left_hand_comp</parameters>
+		<parameters>--name /skin/right_hand_comp</parameters>
 		<node>localhost</node>
 		<prefix>/dump</prefix>
-		<tag>datadumpeur left_hand_comp</tag>
+		<tag>datadumper right_hand_comp</tag>
 	</module>
 	
 	<module>
 		<name>yarpdatadumper</name>
-		<parameters>--name /left_arm/state</parameters>
+		<parameters>--name /right_arm/state</parameters>
 		<node>localhost</node>
 		<prefix>/dump</prefix>
-		<tag>datadumpeur left_arm/state:o</tag>
+		<tag>datadumper right_arm/state:o</tag>
 	</module>
 	
 	<module>
 		<name>yarpdatadumper</name>
-		<parameters>--name /left_arm/analog</parameters>
+		<parameters>--name /right_arm/analog</parameters>
 		<node>localhost</node>
 		<prefix>/dump</prefix>
-		<tag>datadumpeur left_arm/analog:o</tag>
+		<tag>datadumper right_arm/analog:o</tag>
 	</module>
 	
 	<module>
@@ -84,7 +85,38 @@
 		<parameters>--name /model/springy</parameters>
 		<node>localhost</node>
 		<prefix>/dump</prefix>
-		<tag>datadumpeur model/springy</tag>
+		<tag>datadumper model/springy</tag>
+	</module>
+	
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /wbd/endEffectorWrench</parameters>
+		<node>localhost</node>
+		<prefix>/dump</prefix>
+		<tag>datadumper wbd/endEffectorWrench</tag>
+	</module>
+	
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /wbd/cartesianEndEffectorWrench</parameters>
+		<node>localhost</node>
+		<prefix>/dump</prefix>
+		<tag>datadumper wbd/cartesianEndEffectorWrench</tag>
+	</module>
+	
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /cam/right_sampled --type image</parameters>
+		<node>localhost</node>
+		<prefix>/dump</prefix>
+		<tag>datadumper cam/right</tag>
+	</module>
+	
+	<module>
+		<name>yarp sample</name>
+		<parameters>--output /cam/right_sampled --period 1</parameters>
+		<node>localhost</node>
+		<tag>yarp sample</tag>
 	</module>
 	
     <!-- Connections --> 
@@ -115,63 +147,99 @@
     </connection>
     
     <connection>
-        <from>/icub/skin/left_hand</from>
-        <to>/dump/skin/left_hand</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.data_monitor</protocol>
+        <from>/icub/skin/right_hand</from>
+        <to>/dump/skin/right_hand</to>
+        <protocol>tcp<!--+recv.portmonitor+context.grasper+file.data_monitor--></protocol>
     </connection>
     
-    <connection>
+    <!--connection>
         <from>/grasper/actions:io/events:o</from>
-        <to>/dump/skin/left_hand</to>
+        <to>/dump/skin/right_hand</to>
         <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
-    </connection>
+    </connection-->
     
     <connection>
-        <from>/icub/skin/left_hand_comp</from>
-        <to>/dump/skin/left_hand_comp</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.data_monitor</protocol>
+        <from>/icub/skin/right_hand_comp</from>
+        <to>/dump/skin/right_hand_comp</to>
+        <protocol>tcp<!--+recv.portmonitor+context.grasper+file.data_monitor--></protocol>
     </connection>
     
-    <connection>
+    <!--connection>
         <from>/grasper/actions:io/events:o</from>
-        <to>/dump/skin/left_hand_comp</to>
+        <to>/dump/skin/right_hand_comp</to>
         <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
-    </connection>
+    </connection-->
 	
 	<connection>
-        <from>/icub/left_arm/state:o</from>
-        <to>/dump/left_arm/state</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.data_monitor</protocol>
+        <from>/cam/right_sampled</from>
+        <to>/dump/cam/right_sampled</to>
+        <protocol>udp<!--+recv.portmonitor+context.grasper+file.data_monitor--></protocol>
     </connection>
     
     <connection>
+        <from>/icub/cam/right</from>
+        <to>/cam/right_sampled</to>
+        <protocol>udp</protocol>
+    </connection>
+    
+	<connection>
+        <from>/icub/right_arm/state:o</from>
+        <to>/dump/right_arm/state</to>
+        <protocol>tcp<!--+recv.portmonitor+context.grasper+file.data_monitor--></protocol>
+    </connection>
+    
+    <!--connection>
         <from>/grasper/actions:io/events:o</from>
-        <to>/dump/left_arm/state</to>
+        <to>/dump/right_arm/state</to>
         <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
-    </connection>
+    </connection-->
     
     <connection>
-        <from>/icub/left_arm/analog:o</from>
-        <to>/dump/left_arm/analog</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.data_monitor</protocol>
+        <from>/icub/right_arm/analog:o</from>
+        <to>/dump/right_arm/analog</to>
+        <protocol>tcp<!--+recv.portmonitor+context.grasper+file.data_monitor--></protocol>
     </connection>
     
-    <connection>
+    <!--connection>
         <from>/grasper/actions:io/events:o</from>
-        <to>/dump/left_arm/analog</to>
+        <to>/dump/right_arm/analog</to>
         <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
-    </connection>
+    </connection-->
     
     <connection>
         <from>/fingersModel/springy:o</from>
         <to>/dump/model/springy</to>
-        <protocol>tcp+recv.portmonitor+context.grasper+file.data_monitor</protocol>
+        <protocol>tcp<!--+recv.portmonitor+context.grasper+file.data_monitor--></protocol>
     </connection>
     
-    <connection>
+    <!--connection>
         <from>/grasper/actions:io/events:o</from>
         <to>/dump/model/springy</to>
         <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
+    </connection-->
+    
+    <connection>
+        <from>/wholeBodyDynamics/right_arm/endEffectorWrench:o</from>
+        <to>/dump/wbd/endEffectorWrench</to>
+        <protocol>tcp<!--+recv.portmonitor+context.grasper+file.data_monitor--></protocol>
     </connection>
+    
+    <!--connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/wbd/endEffectorWrench</to>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
+    </connection-->
+    
+    <connection>
+        <from>/wholeBodyDynamics/right_arm/cartesianEndEffectorWrench:o</from>
+        <to>/dump/wbd/cartesianEndEffectorWrench</to>
+        <protocol>tcp<!--+recv.portmonitor+context.grasper+file.data_monitor--></protocol>
+    </connection>
+    
+    <!--connection>
+        <from>/grasper/actions:io/events:o</from>
+        <to>/dump/wbd/cartesianEndEffectorWrench</to>
+        <protocol>tcp+recv.portmonitor+context.grasper+file.dump_controller_explore</protocol>
+    </connection-->
         
 </application>

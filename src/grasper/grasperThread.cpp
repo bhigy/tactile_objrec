@@ -28,6 +28,7 @@ using namespace yarp::os;
 const string GrasperThread::GRASP_ACTION 	= "grasp";
 const string GrasperThread::EXPLORE_ACTION 	= "explore";
 const string GrasperThread::WEIGH_ACTION 	= "weigh";
+const string GrasperThread::SKIP_ACTION 	= "skip";
 const string GrasperThread::ACK 			= "ACK";
 const string GrasperThread::NACK 			= "NACK";
 
@@ -47,11 +48,20 @@ void GrasperThread::run()
 		cmdPort_->read(request, true);
 		cout << "Message: " << request.toString() << endl;
 		
-		if (request.size() != 2)
+		if (request.size() == 1)
 		{
-			reply.addString(NACK);
+			string action = request.get(0).asString();
+			if (action != SKIP_ACTION)
+			{
+				reply.addString(NACK);
+			}
+			else
+			{
+				sendLabel("skip");
+				reply.addString(ACK);
+			}
 		}
-		else
+		else if (request.size() == 2)
 		{
 			string action = request.get(0).asString();
 			if (action != GRASP_ACTION && action != EXPLORE_ACTION && action != WEIGH_ACTION)
@@ -65,7 +75,11 @@ void GrasperThread::run()
 				performAction(action);
 				reply.addString(ACK);
 			}
-		}	
+		}
+		else
+		{
+			reply.addString(NACK);
+		}
 		cout << "Reply: >>" << reply.toString() << endl;
 		cmdPort_->reply(reply);
 	}
